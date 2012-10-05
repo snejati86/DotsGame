@@ -1,0 +1,1082 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0027)http://seedspirit.com/dots/ -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="./TP_files/opti1.js"></script>
+<script type="text/javascript">
+var k=0;
+var sea="f";
+//Sea defines the point where the second agent initialzes the minimax search.
+var sspace=new Array();
+//Search spaces for the bi-directional (forward) search.
+var zz="t";
+var sspace1=new Array();
+//Length of the pruned children
+var gridx=new Array();
+//Clone of the grid for minimax
+	var grid2=new Array();
+	//Clone of the grid for minimax (MIN)
+var	tval,tval1;
+var	sval,sval1;
+var e="t";
+var colo="red";
+var cbox=new Array();
+//The conidition of ownership of the boxes , to be used by utility function.
+for(var i=0;i<25;i++)
+cbox[i]=0;
+//Initialization	
+var space=new Array();
+//The pruned nodes are stored here
+var space1=new Array();
+//The pruned nodes are stored here
+var grid=new Array();
+function update()
+//Updates the score for the players
+{ var x=0,y=0;
+	for(var i=0;i<25;i++)
+	{
+if(cbox[i]==1)
+{
+	x++;
+}
+else if(cbox[i]==2)
+{
+	y++;
+}}
+document.getElementById("comp").value=y;
+
+document.getElementById("plyr").value=x;
+if(x+y==25)
+if(y>x)
+document.getElementById("pics").src="http://cdn2.hark.com/images/000/204/422/204422/original.jpg";
+//End game conidition 
+	
+}
+//Initialaze the Grid for the Initial state ( Start of the game)
+for(var i=0;i<60;i++)
+{
+	grid[i]=0;
+}
+function filler()
+//Checks to see if a box can be completed.
+{
+	var cou=new Array();
+	var grid1=new Array();
+	grid1=grid;
+	cou=opti(grid1);
+var fill=0;
+var ran=new Array();
+var j=0;
+for(var i=0;i<60;i++)
+{
+	 if(cou[i]==0 && grid[i]==0)
+	{
+			fill=i+1;	
+	}
+}
+
+var m;
+
+	if(fill>0)
+	{
+	fill=fill-1;
+	document.getElementById("i"+fill).src="blue.gif";
+	grid[fill]=2;
+	gridx[fill]=2;
+	
+	box(fill);
+	filler();
+	}}
+function mapper1(s)
+//Drawing a line (HOR)
+{
+	var map;	
+	    if(s<=6)
+		{
+			map=s-1;
+		}else if(s<=12)
+		{
+			map=s+4;
+		}else if(s<=18)
+		{
+			map=s+9;
+		}
+		else if(s<=24)
+		{
+			map=s+14;
+		}
+			else if(s<=30)
+		{
+			map=s+19;
+		}
+			else if(s<=36)
+		{
+			map=s+24;
+		}
+		//alert(map+" "+s);
+		return map;
+}
+function mapper2(s)
+//Drawing a line (VER)
+{
+		var map;
+	    if(s<=6)
+		{
+			map=s+4;
+		}else if(s<=12)
+		{
+			map=s+9;
+		}else if(s<=18)
+		{
+			map=s+14;
+		}
+		else if(s<=24)
+		{
+			map=s+19;
+		}
+		else if(s<=30)
+		{
+			map=s+24;
+		}
+	
+		return map;
+}
+function box(i)
+{
+	//Fills the square if all the four sides has been filled , Colors the boxs , Keeps the turn.
+
+	 var cou;
+	
+cou=0;
+
+		if(i<5)
+		{
+			cou=o1(i,grid);
+			
+		}else if(i<11)
+		{
+		cou=o2(5,10,i,grid);
+			
+		}else if(i<16)
+		{
+			cou=o1(i,grid);
+			
+		}else if(i<22)
+		{
+		cou=o2(16,21,i,grid);
+		}else if(i<27)
+		{
+			cou=o1(i,grid);
+		}else if(i<33)
+		{
+			cou=o2(27,32,i,grid);
+		}else if(i<38)
+		{
+			cou=o1(i,grid);
+		}
+		else if(i<44)
+		{
+			cou=o2(38,43,i,grid);
+		}else if(i<49)
+		{
+			cou=o1(i,grid);
+		}else if(i<55)
+		{
+	
+			cou=o2(49,54,i,grid);
+
+		}
+		else if(i<60)
+		{
+	
+			cou=o1(i,grid);
+
+		}
+	
+if(cou==0)
+return true;
+	
+	}
+function convert(s)
+{
+	//Draws a line whenever two adjacent radiobuttons are pushed.
+	if(k!=0 && k!=s)
+	{
+		var valid,map;
+		if(k>s)
+		{
+			valid=k-s;
+			
+			if(valid==1)
+			{
+				
+				map=mapper1(s);
+			}else if(valid==6)
+			{
+				map=mapper2(s);
+			}
+		}
+		else
+		{
+			valid=s-k;
+			
+			if(valid==1)
+			{
+			map=mapper1(k);
+			}else if(valid==6)
+			{
+				map=mapper2(k);
+			}
+		}
+		
+		
+		
+		
+			document.getElementById("x"+k).checked=false;
+				document.getElementById("x"+s).checked=false;
+				k=0;
+		
+
+		if((valid==1||valid-6==0)&&grid[map]==0)
+		{
+			colo="red.gif";
+			document.getElementById("i"+map).src="red.gif";
+			grid[map]=1;
+			if(e=="tf")
+			gridx[map]=1;
+		sea="f";
+		e="t";
+
+			if(box(map))
+			{
+				update();
+			}
+			else 
+			{
+			
+		    agent();
+			//The AI agent.
+			}
+			
+					
+
+			
+		}
+		else
+			{	document.getElementById("print").innerHTML="sorry";
+			}
+		
+	
+		
+	}
+	else
+	{
+		
+		k=s;
+	}
+}
+function agent()
+{
+	colo="blue.gif";
+	//Assign the color of the computer.
+	if(sea=="f")
+	//Initially the search is off.
+{
+	
+
+var choice=	choidce();
+//Returns a line to be filled.
+if(choice!=-100)
+{
+document.getElementById("i"+choice).src="blue.gif";
+grid[choice]=2;}
+}
+ if(sea=="t" && e=="t"&& tval!=0)
+{
+	
+	filler();
+	e="f";
+	while(zz=="t")
+	{
+	var k=100,low=100;
+	for(var i=0;i<tval;i++)
+	{
+	if(space[i]<k)
+	{
+	//Search from the forward checking
+	k=space[i];
+	low=i;
+	}
+	
+	}
+	
+	
+	
+	for(var i=0;i<60;i++)
+	{
+		if(grid2[i]==((low+1)*-1))
+		k=i;
+		
+	}
+		var temp=gridx[k],o=0;
+			temp=(temp*-1)-1;
+			for(var i=0;i<60;i++)
+			{
+				if(gridx[k]==gridx[i])
+				o=i;
+			}
+			
+		//Checks for the lowest pruned away group of children.	
+		if(space1[temp]<=space[low])
+		{
+			zz="f";
+			//alert(k);
+			document.getElementById("i"+k).src="blue.gif";
+			grid[k]=2;
+			
+			box(k);
+		}else if(space[(grid2[o]*-1)-1]>space[low])
+		{
+				zz="f";
+			
+			document.getElementById("i"+k).src="blue.gif";
+			grid[k]=2;
+			
+			box(k);
+			
+			}
+		else
+		space[low]=100;
+		
+	}
+	zz="t";
+}
+update();
+
+}
+function copy(i,x) //Cloning function
+{
+	gridx[i]=x;
+}
+function copy2(i,x) 
+{
+	grid2[i]=x;
+}
+function finder1(i)
+{
+	//Coloring function
+	if(i<5)
+	{
+	}
+	else if(i<16)
+	{
+	i=i-6;
+	}else if(i<27)
+	{
+		i=i-12;
+	}
+	else if(i<38)
+	{
+		i=i-18;
+	}else if(i<49)
+	{
+		i=i-24;
+	}
+	
+		
+		
+	
+	if(cbox[i]==0)
+	{
+	document.getElementById("n"+i).src=colo;
+	if(colo=="red.gif")
+	cbox[i]=1;
+	else if(colo=="blue.gif")
+	cbox[i]=2;
+	}
+}
+function finder2(i)
+{
+	//Coloring function
+	if(i<16)
+	{
+		i=i-11;
+	}
+	else if(i<27)
+	{
+		i=i-17;
+	}
+	else if(i<38)
+	{
+		i=i-23;
+	}
+	else if(i<49)
+	{
+		i=i-29;
+	}
+	else if(i<60)
+	{
+		i=i-35;
+	}
+	
+	if(cbox[i]==0)
+	{
+	document.getElementById("n"+i).src=colo;
+	if(colo=="red.gif")
+	cbox[i]=1;
+	else if(colo=="blue.gif")
+	cbox[i]=2;
+	}}
+function o1(i,gridz)
+{
+	//Part of the agent that checks to avoid completing on the third side of the box.
+	var x=0;
+		if(i<54)
+		{
+			if(gridz[i+5]==0)
+			x=x+1;
+			if(gridz[i+6]==0)
+			x=x+1;
+			if(gridz[i+11]==0)
+			x=x+1;
+			if(x==0)
+			{
+				finder1(i);
+			
+				if(i>10)
+				{
+				var y=0;
+					if(gridz[i-5]==0)
+				y=y+1;
+				if(gridz[i-6]==0)
+				y=y+1;
+				if(gridz[i-11]==0)
+				y=y+1;
+				if(y==0)
+				{
+				finder2(i);
+				}
+				}
+			}
+		}
+		
+		if(x==1&&i>10)
+		{
+			x=0;
+			if(gridz[i-5]==0)
+			x=x+1;
+			if(gridz[i-6]==0)
+			x=x+1;
+			if(gridz[i-11]==0)
+			x=x+1;
+			if(x==0)
+			{
+				finder2(i);
+			return 0;
+			}
+			else 
+			return 1;	
+		}
+	
+			if((x>1||i>=54)&&i>10)
+			{
+				x=0;
+			if(gridz[i-5]==0)
+			x=x+1;
+			if(gridz[i-6]==0)
+			x=x+1;
+			if(gridz[i-11]==0)
+			x=x+1;
+			if(x==0)
+			finder2(i);
+			}		
+			return x;
+}
+function finder3(i)
+{
+	if(i<11)
+	i=i-5;
+	else if(i<22)
+	i=i-11;
+	else if(i<33)
+	i=i-17;
+	else if(i<44)
+	i=i-23;
+	else if(i<55)
+	i=i-29;
+	
+	if(cbox[i]==0)
+	{
+	document.getElementById("n"+i).src=colo;
+	if(colo=="red.gif")
+	cbox[i]=1;
+	else if(colo=="blue.gif")
+	cbox[i]=2;
+	}	
+}
+function finder4(i)
+{
+	if(i<11)
+	i=i-6;
+	else if(i<22)
+	i=i-12;
+	else if(i<33)
+	i=i-18;
+	else if(i<44)
+	i=i-24;
+	else if(i<55)
+	i=i-30;	
+	
+	if(cbox[i]==0)
+	{
+	document.getElementById("n"+i).src=colo;
+	if(colo=="red.gif")
+	cbox[i]=1;
+	else if(colo=="blue.gif")
+	cbox[i]=2;
+	}
+}
+function o2(s1,s2,i,gridz)
+{var x=0;
+		if(i!=s2)
+			{
+			if(gridz[i-5]==0)
+			x=x+1;
+			if(gridz[i+1]==0)
+			x=x+1;
+			if(gridz[i+6]==0)
+			x=x+1;
+			if(x==0)
+			{
+			finder3(i);
+					if(i!=s1)
+				{
+				var y=0;
+				if(gridz[i-6]==0)
+				y=y+1;
+				if(gridz[i-1]==0)
+				y=y+1;
+				if(gridz[i+5]==0)
+				y=y+1;
+				if(y==0)
+				{
+					finder4(i);
+				
+				}
+			}
+			}
+			}
+			if(x==1 && i!=s1)
+			{
+				x=0;
+			if(gridz[i-6]==0)
+			x=x+1;
+			if(gridz[i-1]==0)
+			x=x+1;
+			if(gridz[i+5]==0)
+			x=x+1;
+				if(x==0)
+				{
+					finder4(i);
+					return 0;
+				}
+			else 
+			return 1;
+			}
+			if(i!=s1 && (x>1||i==s2))
+			{
+			x=0;
+			if(gridz[i-6]==0)
+			x=x+1;
+			if(gridz[i-1]==0)
+			x=x+1;
+			if(gridz[i+5]==0)
+			x=x+1;
+			if(x==0)
+			finder4(i);
+			}
+						
+
+			return x;
+}
+function opti(grid1)
+{
+	//SCANs the grid .
+	 var cou=new Array();
+	
+
+	for(var i=0;i<60;i++)
+{
+	cou[i]=0;
+	if(grid1[i]==0)
+	{
+		if(i<5)
+		{
+			cou[i]=o1(i,grid1);
+			
+		}else if(i<11)
+		{
+		cou[i]=o2(5,10,i,grid1);
+			
+		}else if(i<16)
+		{
+			cou[i]=o1(i,grid1);
+			
+		}else if(i<22)
+		{
+		cou[i]=o2(16,21,i,grid1);
+		}else if(i<27)
+		{
+			cou[i]=o1(i,grid1);
+		}else if(i<33)
+		{
+			cou[i]=o2(27,32,i,grid1);
+		}else if(i<38)
+		{
+			cou[i]=o1(i,grid1);
+		}
+		else if(i<44)
+		{
+			cou[i]=o2(38,43,i,grid1);
+		}else if(i<49)
+		{
+			cou[i]=o1(i,grid1);
+		}else if(i<55)
+		{
+	
+			cou[i]=o2(49,54,i,grid1);
+
+		}
+		else if(i<60)
+		{
+	
+			cou[i]=o1(i,grid1);
+
+		}
+	}
+
+}
+	return cou;}
+
+
+function choidce()
+{
+	//Return which line has to be filled
+	colo="blue.gif";
+	var cou=new Array();
+	var grid1=new Array();
+	grid1=grid;
+	cou=opti(grid1);
+var fill=0;
+var ran=new Array();
+var j=0;
+for(var i=0;i<60;i++)
+{//document.getElementById("print").innerHTML=document.getElementById("print").innerHTML+"</br>"+i+" "+cou[i]+" "+grid[i];
+	if(cou[i]>1)
+	{
+		ran[j]=i;
+		j++;
+	}else if(cou[i]==0 && grid[i]==0)
+	{
+			fill=i+1;	
+	}
+}
+
+var m;
+
+	if(fill>0)
+	{
+	fill=fill-1;
+	document.getElementById("i"+fill).src="blue.gif";
+	grid[fill]=2;
+	
+	//Extra turn after completing the box.
+	agent();
+	}
+	else
+	{colo="clear.gif";
+	if(j>=2)
+		{
+		m=Math.floor(Math.random()*11);	
+			while(m>=j)
+			{
+			m=Math.floor(Math.random()*11);	
+			}
+
+		return ran[m];
+		}
+		else if(j==1)
+		{
+			return ran[0];
+		}
+	
+	if(j==0)
+	{
+		var sam=new Array()
+		var kk=0;
+	
+		var hel=new Array();
+		var val;
+	//Minimax ( Since there are no options left)
+	for(var i=0;i<60;i++)
+	{copy2(i,grid[i]);
+	copy(i,grid[i]);
+	}
+	//Grid
+		sam=opti(grid2);
+		for(var i=0;i<60;i++)
+		{
+			if(grid2[i]==0 && sam[i]==1)
+			{
+				hel[kk]=i;
+				kk++;
+			}
+			
+		}
+		val=0;
+		for(var zzz=0;zzz<kk;zzz++)
+		{
+			
+			if(grid2[hel[zzz]]==0)
+			{
+				val--;
+				grid2[hel[zzz]]=val;
+				hel[zzz]=val;
+				grid2=simulat(grid2,val);
+				for(var i=0;i<60;i++)
+		 		{
+					if(grid2[i]==val)
+					for(var j=0;j<kk;j++)
+					{
+						if(hel[j]==i)
+						{
+							hel[j]=val;
+			
+						}
+					}
+				}
+			}
+		}
+			sam=opti(gridx);
+			// Bi Diredctional scan of the grid.
+		for(var i=0;i<60;i++)
+		{
+			if(gridx[i]==0 && sam[i]==1)
+			{
+				hel[kk]=i;
+				kk++;
+			}
+			
+		}
+	var	val1=0;
+		for(var zzz=kk;zzz>=0;zzz--)
+		{
+			
+			if(gridx[hel[zzz]]==0)
+			{
+				val1--;
+				gridx[hel[zzz]]=val1;
+				hel[zzz]=val1;
+				gridx=simulat(gridx,val1);
+				for(var i=0;i<60;i++)
+		 		{
+					if(gridx[i]==val1)
+					for(var j=0;j<kk;j++)
+					{
+						if(hel[j]==i)
+						{
+							hel[j]=val1;
+			
+						}
+					}
+				}
+			}
+		}
+	
+		
+		
+	}
+	val=val*-1;
+	val1=val1*-1;
+	var temp=new Array();
+	
+	var ses=new Array();
+	
+	var temp1=new Array();
+	
+	var ses1=new Array();
+	
+	for(var i=0;i<val1;i++)
+	temp1[i]=0;
+	var j=0;
+	for(var i=0;i<60;i++)
+	{
+		if(gridx[i]<0)
+		{
+			temp1[(gridx[i]*-1)-1]=temp1[(gridx[i]*-1)-1]+1;
+			ses1[j]=i;
+			j++;
+		}
+	
+	}
+	space1=temp1;
+	sspace1=ses1;
+	tval1=val1;
+	sval1=j;
+	
+	
+	for(var i=0;i<val;i++)
+	temp[i]=0;
+	var j=0;
+	for(var i=0;i<60;i++)
+	{
+		if(grid2[i]<0)
+		{
+			temp[(grid2[i]*-1)-1]=temp[(grid2[i]*-1)-1]+1;
+			ses[j]=i;
+			j++;
+		}
+	
+	}
+	sea="t";
+	space=temp;
+	sspace=ses;
+	tval=val;
+	sval=j;
+	//-------------
+	
+	
+	
+	
+	}
+	return -100;
+}
+//Calls the agent 
+function simulat(grid3,val)
+{
+	var cou=new Array();
+	
+	cou=opti1(grid3,val);
+var fill=0;
+var ran=new Array();
+var j=0;
+for(var i=0;i<60;i++)
+{//document.getElementById("print").innerHTML=document.getElementById("print").innerHTML+"</br>"+i+" "+cou[i]+" "+grid[i];
+	if(cou[i]>1)
+	{
+		ran[j]=i;
+		j++;
+	}else if(cou[i]==0 && grid3[i]==0)
+	{
+			fill=i+1;	
+	}
+}
+
+var m;
+
+	if(fill>0)
+	{
+	fill=fill-1;
+	//document.getElementById("i"+fill).src="blue.gif";
+	grid3[fill]=val;
+	
+	
+	grid3=simulat(grid3,val);
+	}
+	return grid3;
+}
+</script>
+
+<title>Dots and Boxes</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" align="center">
+<tbody>
+
+<tr>
+<td align="center"><input type="radio" id="x1" onclick="convert(1);"></td>
+<td align="center"><img id="i0" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x2" onclick="convert(2);"></td>
+<td align="center"><img id="i1" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x3" onclick="convert(3);"></td>
+<td align="center"><img id="i2" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x4" onclick="convert(4);"></td>
+
+<td align="center"><img id="i3" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x5" onclick="convert(5);"></td>
+<td align="center"><img id="i4" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x6" onclick="convert(6);"></td>
+
+</tr>
+<tr>
+<td align="center"><img id="i5" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n0" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i6" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n1" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i7" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n2" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i8" src="./TP_files/clear.gif" width="5" height="30"></td>
+
+<td align="center"><img id="n3" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i9" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n4" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i10" src="./TP_files/clear.gif" width="5" height="30"></td>
+</tr>
+<tr>
+<td align="center"><input type="radio" id="x7" onclick="convert(7);"></td>
+<td align="center"><img id="i11" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x8" onclick="convert(8);"></td>
+<td align="center"><img id="i12" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x9" onclick="convert(9);"></td>
+<td align="center"><img id="i13" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x10" onclick="convert(10);"></td>
+
+
+<td align="center"><img id="i14" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x11" onclick="convert(11);"></td>
+<td align="center"><img id="i15" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x12" onclick="convert(12);"></td>
+
+</tr>
+<tr>
+<td align="center"><img id="i16" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n5" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i17" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n6" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i18" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n7" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i19" src="./TP_files/clear.gif" width="5" height="30"></td>
+
+
+<td align="center"><img id="n8" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i20" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n9" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i21" src="./TP_files/clear.gif" width="5" height="30"></td>
+</tr>
+<tr>
+<td align="center"><input type="radio" id="x13" onclick="convert(13);"></td>
+<td align="center"><img id="i22" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x14" onclick="convert(14);"></td>
+<td align="center"><img id="i23" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x15" onclick="convert(15);"></td>
+<td align="center"><img id="i24" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x16" onclick="convert(16);"></td>
+
+
+
+<td align="center"><img id="i25" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x17" onclick="convert(17);"></td>
+<td align="center"><img id="i26" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x18" onclick="convert(18);"></td>
+</tr>
+<tr>
+<td align="center"><img id="i27" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n10" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i28" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n11" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i29" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n12" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i30" src="./TP_files/clear.gif" width="5" height="30"></td>
+
+
+<td align="center"><img id="n13" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i31" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n14" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i32" src="./TP_files/clear.gif" width="5" height="30"></td>
+</tr>
+<tr>
+<td align="center"><input type="radio" id="x19" onclick="convert(19);"></td>
+<td align="center"><img id="i33" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x20" onclick="convert(20);"></td>
+<td align="center"><img id="i34" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x21" onclick="convert(21);"></td>
+<td align="center"><img id="i35" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x22" onclick="convert(22);"></td>
+
+
+
+<td align="center"><img id="i36" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x23" onclick="convert(23);"></td>
+<td align="center"><img id="i37" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x24" onclick="convert(24);"></td>
+</tr>
+<tr>
+<td align="center"><img id="i38" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n15" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i39" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n16" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i40" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n17" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i41" src="./TP_files/clear.gif" width="5" height="30"></td>
+
+
+<td align="center"><img id="n18" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i42" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n19" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i43" src="./TP_files/clear.gif" width="5" height="30"></td>
+</tr>
+<tr>
+<td align="center"><input type="radio" id="x25" onclick="convert(25);"></td>
+<td align="center"><img id="i44" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x26" onclick="convert(26);"></td>
+<td align="center"><img id="i45" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x27" onclick="convert(27);"></td>
+<td align="center"><img id="i46" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x28" onclick="convert(28);"></td>
+
+
+
+<td align="center"><img id="i47" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x29" onclick="convert(29);"></td>
+<td align="center"><img id="i48" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x30" onclick="convert(30);"></td>
+</tr>
+<tr>
+<td align="center"><img id="i49" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n20" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i50" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n21" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i51" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n22" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i52" src="./TP_files/clear.gif" width="5" height="30"></td>
+
+
+<td align="center"><img id="n23" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i53" src="./TP_files/clear.gif" width="5" height="30"></td>
+<td align="center"><img id="n24" src="./TP_files/clear.gif" width="30" height="30"></td>
+<td align="center"><img id="i54" src="./TP_files/clear.gif" width="5" height="30"></td>
+</tr>
+<tr>
+<td height="17" align="center"><input type="radio" id="x31" onclick="convert(31);"></td>
+<td align="center"><img id="i55" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x32" onclick="convert(32);"></td>
+<td align="center"><img id="i56" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x33" onclick="convert(33);"></td>
+<td align="center"><img id="i57" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x34" onclick="convert(34);"></td>
+
+
+
+<td align="center"><img id="i58" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x35" onclick="convert(35);"></td>
+<td align="center"><img id="i59" src="./TP_files/clear.gif" width="30" height="5"></td>
+<td align="center"><input type="radio" id="x36" onclick="convert(36);"></td>
+</tr>
+<tr>
+</tr>
+<tr>
+
+<td bgcolor="#FCFCFC" colspan="7"><p>&nbsp;Computer:
+    <input type="text" id="comp" size="2" value="0">
+  </p></td>
+<td bgcolor="#FCFCFC" colspan="5"><p>Player:  
+  <input type="text" id="plyr" size="2" value="0">
+</p></td>
+<td bgcolor="#FCFCFC" colspan="3"><input type="button" value="Reset" onclick="window.location=window.location;"></td>
+</tr>
+</tbody></table>
+<center>
+<img src="./TP_files/clear.gif" id="pics"></center>
+
+
+</body></html>
